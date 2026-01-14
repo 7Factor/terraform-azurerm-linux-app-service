@@ -112,9 +112,3 @@ After apply:
   - If no `app_secrets` are provided, this value is ignored
 - _key_vault_soft_delete_retention_days_ (number, default: 7)
   - If no `app_secrets` are provided, this value is ignored
-
-## Contributing
-
-Issues and PRs are welcome. Please:
-- Keep defaults sensible and changes backward-compatible where possible.
-- Add/update examples and README entries when introducing new inputs or behaviors.
