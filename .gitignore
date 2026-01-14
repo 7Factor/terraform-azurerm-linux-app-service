@@ -1,0 +1,20 @@
+# Terraform state
+.terraform
+terraform.tfstate
+terraform.tfstate.backup
+
+# Secrets and whatnot
+keys/
+secrets.tfvars
+backend.tf
+
+# IDE settings
+.idea
+.vscode
+
+.DS_Store
+Thumbs.db
+
+.kitchen
+testing.tfvars
+.terraform.lock.hcl
