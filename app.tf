@@ -35,19 +35,19 @@ resource "azurerm_linux_web_app" "web_app" {
 
   site_config {
     application_stack {
-      docker_image_name = var.application_stack.docker_image_name
-      docker_registry_url = var.application_stack.docker_registry_url
+      docker_image_name        = var.application_stack.docker_image_name
+      docker_registry_url      = var.application_stack.docker_registry_url
       docker_registry_username = var.application_stack.docker_registry_username
       docker_registry_password = var.application_stack.docker_registry_password
-      dotnet_version = var.application_stack.dotnet_version
-      go_version = var.application_stack.go_version
-      java_server = var.application_stack.java_server
-      java_server_version = var.application_stack.java_server_version
-      java_version = var.application_stack.java_version
-      node_version = var.application_stack.node_version
-      php_version = var.application_stack.php_version
-      python_version = var.application_stack.python_version
-      ruby_version = var.application_stack.ruby_version
+      dotnet_version           = var.application_stack.dotnet_version
+      go_version               = var.application_stack.go_version
+      java_server              = var.application_stack.java_server
+      java_server_version      = var.application_stack.java_server_version
+      java_version             = var.application_stack.java_version
+      node_version             = var.application_stack.node_version
+      php_version              = var.application_stack.php_version
+      python_version           = var.application_stack.python_version
+      ruby_version             = var.application_stack.ruby_version
     }
   }
 
@@ -79,11 +79,17 @@ resource "azurerm_monitor_diagnostic_setting" "app_to_law" {
   target_resource_id         = azurerm_linux_web_app.web_app.id
   log_analytics_workspace_id = var.log_analytics_workspace_id
 
-  enabled_log {
-    category_group = "allLogs"
+  dynamic "enabled_log" {
+    for_each = toset(var.diagnostic_log_category_groups)
+    content {
+      category_group = enabled_log.value
+    }
   }
 
-  enabled_metric {
-    category = "AllMetrics"
+  dynamic "enabled_metric" {
+    for_each = toset(var.diagnostic_metric_categories)
+    content {
+      category = enabled_metric.value
+    }
   }
 }

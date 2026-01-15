@@ -74,6 +74,18 @@ variable "log_analytics_workspace_id" {
   default     = null
 }
 
+variable "diagnostic_log_category_groups" {
+  description = "List of log category groups to enable for diagnostic settings."
+  type        = list(string)
+  default     = ["allLogs"]
+}
+
+variable "diagnostic_metric_categories" {
+  description = "List of metric categories to enable for diagnostic settings."
+  type        = list(string)
+  default     = ["AllMetrics"]
+}
+
 variable "global_tags" {
   description = "Tags to apply to all resources (e.g., environment, cost-center)."
   type        = map(string)

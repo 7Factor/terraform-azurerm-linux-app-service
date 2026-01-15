@@ -110,6 +110,12 @@ After apply:
 - _plan_sku_ (string, default: "B2")
   - App Service Plan SKU name (e.g., "B1", "B2", "S1", "P1v3").
 
+- _diagnostic_log_category_groups_ (list(string), default: ["allLogs"])
+  - List of log category groups to enable for diagnostic settings.
+
+- _diagnostic_metric_categories_ (list(string), default: ["AllMetrics"])
+  - List of metric categories to enable for diagnostic settings.
+
 - _key_vault_sku_ (string, default: "standard")
   - If no `app_secrets` are provided, this value is ignored
 
