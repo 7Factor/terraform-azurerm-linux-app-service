@@ -42,11 +42,23 @@ variable "app_secrets" {
   }
 }
 
-
-variable "dotnet_version" {
-  description = "Linux .NET runtime version (e.g., 10.0)."
-  type        = string
-  default     = "10.0"
+variable "application_stack" {
+  type = object({
+    docker_image_name = optional(string)
+    docker_registry_url = optional(string)
+    docker_registry_username = optional(string)
+    docker_registry_password = optional(string)
+    dotnet_version = optional(string)
+    go_version = optional(string)
+    java_server = optional(string)
+    java_server_version = optional(string)
+    java_version = optional(string)
+    node_version = optional(string)
+    php_version = optional(string)
+    python_version = optional(string)
+    ruby_version = optional(string)
+  })
+  default = {}
 }
 
 variable "plan_sku" {

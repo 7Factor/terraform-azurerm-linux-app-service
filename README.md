@@ -28,6 +28,10 @@ module "web_app" {
     name_prefix = "acme"
     app_name = "orders-api"
 
+    application_stack = {
+      dotnet_version = "10.0"
+    }
+
     # Optional: App settings passed directly to the Web App
     app_settings = {
         ASPNETCORE_URLS = "http://0.0.0.0:8080"
@@ -86,6 +90,9 @@ After apply:
   - _app_setting_ (string, optional): App setting key to bind via Key Vault reference. If omitted, the secret is created but not bound.
   - _initial_value_ (string, optional, default ""): Seed value for first deploy. Subsequent changes are ignored. Populate/rotate via Azure Portal or CI.
 
+- _application_stack_ (object)
+  - An [application_stack](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_web_app#application_stack-1) block
+
 - _log_analytics_workspace_id_ (string, default: null)
   - If provided, Application Insights is workspace-based and diagnostic settings send logs/metrics to this workspace.
 
@@ -99,9 +106,6 @@ After apply:
 
 - _location_ (string, default: "eastus2")
   - Azure location for resources (ignored if `resource_group_id` is provided).
-
-- _dotnet_version_ (string, default: "10.0")
-  - Linux .NET runtime version (e.g., "8.0", "9.0", "10.0").
 
 - _plan_sku_ (string, default: "B2")
   - App Service Plan SKU name (e.g., "B1", "B2", "S1", "P1v3").
