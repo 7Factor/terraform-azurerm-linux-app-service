@@ -54,7 +54,7 @@ resource "azurerm_linux_web_app" "web_app" {
   app_settings = merge(
     var.app_settings,
     {
-      "APPINSIGHTS_CONNECTIONSTRING"               = azurerm_application_insights.web_app.connection_string
+      "APPLICATIONINSIGHTS_CONNECTION_STRING"      = azurerm_application_insights.web_app.connection_string
       "ApplicationInsightsAgent_EXTENSION_VERSION" = "~3"
       "XDT_MicrosoftApplicationInsights_Mode"      = "recommended"
     },
