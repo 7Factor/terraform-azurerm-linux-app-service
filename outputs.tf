@@ -7,7 +7,7 @@ output "app_default_hostname" {
 }
 
 output "app_service_plan_id" {
-  value = azurerm_service_plan.web_app.id
+  value = local.service_plan_id
 }
 
 output "application_insights_connection_string" {

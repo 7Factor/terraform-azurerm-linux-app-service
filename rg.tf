@@ -1,4 +1,6 @@
 resource "azurerm_resource_group" "web_app" {
+  count = var.resource_group_name == null ? 1 : 0
+
   location = var.location
   name     = trim("${var.name_prefix}-rg-${var.app_name}", "-")
 
@@ -10,9 +12,12 @@ resource "azurerm_resource_group" "web_app" {
   )
 }
 
-import {
-  for_each = var.resource_group_id != null ? [var.resource_group_id] : []
+data "azurerm_resource_group" "web_app" {
+  count = var.resource_group_name != null ? 1 : 0
 
-  to = azurerm_resource_group.web_app
-  id = var.resource_group_id
+  name = var.resource_group_name
+}
+
+locals {
+  resource_group = var.resource_group_name != null ? data.azurerm_resource_group.web_app[0] : azurerm_resource_group.web_app[0]
 }

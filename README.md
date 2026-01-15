@@ -101,17 +101,23 @@ After apply:
 
 ### Optional
 
-- _resource_group_id_ (string, default: null)
-  - Existing Resource Group ID. If not provided, a new RG is created using `location`.
+- _resource_group_name_ (string, default: null)
+  - Existing Resource Group name. If not provided, a new RG is created using `location`.
 
 - _location_ (string, default: "eastus2")
   - Azure location for resources (ignored if `resource_group_id` is provided).
 
-- _plan_sku_ (string, default: "B2")
-  - App Service Plan SKU name (e.g., "B1", "B2", "S1", "P1v3").
+- _service_plan_sku_ (string, default: "B2")
+  - App Service Plan SKU name (e.g., "B1", "B2", "S1", "P1v3"). If a `service_plan_id` is provided, this value is ignored.
+
+- _service_plan_id_ (string, default: null)
+  - Existing App Service Plan ID. If this is not provided, a new plan will be created.
 
 - _diagnostic_log_category_groups_ (list(string), default: ["allLogs"])
   - List of log category groups to enable for diagnostic settings.
+
+- _diagnostic_log_categories_ (list(string), default: [])
+  - List of log categories to enable for diagnostic settings.
 
 - _diagnostic_metric_categories_ (list(string), default: ["AllMetrics"])
   - List of metric categories to enable for diagnostic settings.

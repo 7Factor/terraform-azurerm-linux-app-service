@@ -4,8 +4,8 @@ variable "name_prefix" {
   default     = ""
 }
 
-variable "resource_group_id" {
-  description = "(Optional) Existing Resource Group ID. If this is not provided, a resource group will be created automatically."
+variable "resource_group_name" {
+  description = "(Optional) Existing Resource Group name. If this is not provided, a resource group will be created automatically."
   type        = string
   default     = null
 }
@@ -62,10 +62,16 @@ variable "application_stack" {
   default = {}
 }
 
-variable "plan_sku" {
+variable "service_plan_sku" {
   description = "App Service Plan size within the tier, e.g., B2."
   type        = string
   default     = "B2"
+}
+
+variable "service_plan_id" {
+  description = "Existing App Service Plan ID. If this is not provided, a new plan will be created."
+  type        = string
+  default     = null
 }
 
 variable "log_analytics_workspace_id" {
@@ -78,6 +84,12 @@ variable "diagnostic_log_category_groups" {
   description = "List of log category groups to enable for diagnostic settings."
   type        = list(string)
   default     = ["allLogs"]
+}
+
+variable "diagnostic_log_categories" {
+  description = "List of log categories to enable for diagnostic settings."
+  type        = list(string)
+  default     = []
 }
 
 variable "diagnostic_metric_categories" {
@@ -112,7 +124,7 @@ variable "key_vault_soft_delete_retention_days" {
 locals {
   # Index secrets by name for easy for_each
   app_secrets_by_name = {
-    for s in var.app_secrets : nonsensitive(s.name) => s
+    for s in nonsensitive(var.app_secrets) : s.name => sensitive(s)
   }
 
   # App settings subset (only those with app_setting provided)

@@ -9,8 +9,8 @@ resource "azurerm_key_vault" "web_app" {
   count = local.create_kv ? 1 : 0
 
   name                = substr(local.kv_base, 0, 24)
-  location            = azurerm_resource_group.web_app.location
-  resource_group_name = azurerm_resource_group.web_app.name
+  location            = local.resource_group.location
+  resource_group_name = local.resource_group.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
   sku_name            = var.key_vault_sku
 
