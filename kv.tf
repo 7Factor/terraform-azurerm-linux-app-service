@@ -33,7 +33,7 @@ resource "azurerm_key_vault_secret" "linked" {
   for_each = local.app_secrets_by_name
 
   name         = each.key
-  value        = try(each.value.initial_value, "")
+  value        = coalesce(each.value.initial_value, "")
   key_vault_id = azurerm_key_vault.web_app[0].id
 
   lifecycle {

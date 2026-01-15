@@ -34,32 +34,32 @@ module "web_app" {
 
     # Optional: App settings passed directly to the Web App
     app_settings = {
-        ASPNETCORE_URLS = "http://0.0.0.0:8080"
+      ASPNETCORE_URLS = "http://0.0.0.0:8080"
     }
 
     # Optional: Link Key Vault secrets and bind to app settings
     app_secrets = [
-        {
-            name          = "Db-ConnectionString"
-            app_setting   = "ConnectionStrings__Database"
-            initial_value = "sample" # optional - defaults to ""
-        },
-        {
-            name        = "Api-Key"
-            app_setting = "MyApi__Key"
-        },
-        {
-            name = "Unbound-Secret"
-            # app_setting omitted; secret is created in Key Vault but not bound to app settings
-        }
+      {
+        name             = "Db-ConnectionString"
+        app_setting_name = "ConnectionStrings__Database"
+        initial_value    = "sample" # optional - defaults to ""
+      },
+      {
+        name             = "Api-Key"
+        app_setting_name = "MyApi__Key"
+      },
+      {
+        name = "Unbound-Secret"
+        # app_setting omitted; secret is created in Key Vault but not bound to app settings
+      }
     ]
 
     # Optional: Centralized logging
     # log_analytics_workspace_id = "/subscriptions//resourceGroups//providers/Microsoft.OperationalInsights/workspaces/"
 
     global_tags = {
-        environment = "dev"
-        owner = "platform-team"
+      environment = "dev"
+      owner = "platform-team"
     }
 }
 ```
@@ -112,7 +112,9 @@ After apply:
 
 - _key_vault_sku_ (string, default: "standard")
   - If no `app_secrets` are provided, this value is ignored
+
 - _key_vault_purge_protection_enabled_ (bool, default: false)
   - If no `app_secrets` are provided, this value is ignored
+
 - _key_vault_soft_delete_retention_days_ (number, default: 7)
   - If no `app_secrets` are provided, this value is ignored

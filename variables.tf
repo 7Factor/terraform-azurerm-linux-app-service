@@ -30,11 +30,12 @@ variable "app_settings" {
 variable "app_secrets" {
   description = "List of secrets to create and optionally bind to app settings."
   type = list(object({
-    name          = string
-    app_setting   = optional(string)
-    initial_value = optional(string, "")
+    name             = string
+    app_setting_name = optional(string)
+    initial_value    = optional(string, "")
   }))
-  default = []
+  default   = []
+  sensitive = true
 
   validation {
     condition     = length([for s in var.app_secrets : s.name]) == length(distinct([for s in var.app_secrets : s.name]))
@@ -44,19 +45,19 @@ variable "app_secrets" {
 
 variable "application_stack" {
   type = object({
-    docker_image_name = optional(string)
-    docker_registry_url = optional(string)
+    docker_image_name        = optional(string)
+    docker_registry_url      = optional(string)
     docker_registry_username = optional(string)
     docker_registry_password = optional(string)
-    dotnet_version = optional(string)
-    go_version = optional(string)
-    java_server = optional(string)
-    java_server_version = optional(string)
-    java_version = optional(string)
-    node_version = optional(string)
-    php_version = optional(string)
-    python_version = optional(string)
-    ruby_version = optional(string)
+    dotnet_version           = optional(string)
+    go_version               = optional(string)
+    java_server              = optional(string)
+    java_server_version      = optional(string)
+    java_version             = optional(string)
+    node_version             = optional(string)
+    php_version              = optional(string)
+    python_version           = optional(string)
+    ruby_version             = optional(string)
   })
   default = {}
 }
@@ -99,12 +100,12 @@ variable "key_vault_soft_delete_retention_days" {
 locals {
   # Index secrets by name for easy for_each
   app_secrets_by_name = {
-    for s in var.app_secrets : s.name => s
+    for s in var.app_secrets : nonsensitive(s.name) => s
   }
 
   # App settings subset (only those with app_setting provided)
   app_secret_bindings = {
-    for s in var.app_secrets : s.app_setting => s.name
-    if try(s.app_setting != null && length(trim(s.app_setting)) > 0, false)
+    for s in var.app_secrets : nonsensitive(s.app_setting_name) => nonsensitive(s.name)
+    if try(s.app_setting_name != null && length(trim(s.app_setting_name)) > 0, false)
   }
 }
