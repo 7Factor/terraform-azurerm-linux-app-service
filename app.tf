@@ -19,7 +19,7 @@ resource "azurerm_linux_web_app" "web_app" {
   key_vault_reference_identity_id = azurerm_user_assigned_identity.web_app.id
 
   identity {
-    type = "UserAssigned"
+    type = var.enable_system_assigned_identity ? "SystemAssigned, UserAssigned" : "UserAssigned"
     identity_ids = [
       azurerm_user_assigned_identity.web_app.id
     ]

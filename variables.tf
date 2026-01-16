@@ -110,6 +110,12 @@ variable "global_tags" {
   default     = {}
 }
 
+variable "enable_system_assigned_identity" {
+  description = "Enable system-assigned managed identity on the app (in addition to the user-assigned one)."
+  type        = bool
+  default     = false
+}
+
 variable "key_vault" {
   type = object({
     sku = optional(string)

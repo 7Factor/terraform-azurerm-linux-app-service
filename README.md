@@ -127,6 +127,9 @@ After apply:
 - _diagnostic_metric_categories_ (list(string), default: ["AllMetrics"])
   - List of metric categories to enable for diagnostic settings.
 
+- _enable_system_assigned_identity_ (bool, default: false)
+  - Enable system-assigned managed identity on the app (in addition to the user-assigned one).
+
 - _key_vault_ (object, default: {})
   - **Note**: If no `app_secrets` are provided, all values in this block are ignored.
   - _sku_ (string, default: "standard")
