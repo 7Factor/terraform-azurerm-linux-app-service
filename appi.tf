@@ -1,5 +1,5 @@
 resource "azurerm_application_insights" "web_app" {
-  name                = trim("${var.name_prefix}-appi-${var.app_name}", "-")
+  name                = trim("${var.name_prefix}-appi-${var.app_name}-${var.name_suffix}", "-")
   resource_group_name = local.resource_group.name
   location            = local.resource_group.location
 

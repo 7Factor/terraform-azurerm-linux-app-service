@@ -1,11 +1,18 @@
 resource "azurerm_user_assigned_identity" "web_app" {
   location            = local.resource_group.location
   resource_group_name = local.resource_group.name
-  name                = trim("${var.name_prefix}-id-${var.app_name}", "-")
+  name                = trim("${var.name_prefix}-id-${var.app_name}-${var.name_suffix}", "-")
+}
+
+locals {
+  app_secret_bindings = {
+    for s in nonsensitive(var.app_secrets) : s.app_setting_name => s.name
+    if try(s.app_setting_name != null && length(trim(s.app_setting_name)) > 0, false)
+  }
 }
 
 resource "azurerm_linux_web_app" "web_app" {
-  name                            = trim("${var.name_prefix}-app-${var.app_name}", "-")
+  name                            = trim("${var.name_prefix}-app-${var.app_name}-${var.name_suffix}", "-")
   resource_group_name             = local.resource_group.name
   location                        = local.resource_group.location
   service_plan_id                 = local.service_plan_id
@@ -60,7 +67,7 @@ resource "azurerm_linux_web_app" "web_app" {
 resource "azurerm_monitor_diagnostic_setting" "app_to_law" {
   count = var.log_analytics_workspace_id == null ? 0 : 1
 
-  name                       = trim("${var.name_prefix}-diag-${var.app_name}", "-")
+  name                       = trim("${var.name_prefix}-diag-${var.app_name}-${var.name_suffix}", "-")
   target_resource_id         = azurerm_linux_web_app.web_app.id
   log_analytics_workspace_id = var.log_analytics_workspace_id
 

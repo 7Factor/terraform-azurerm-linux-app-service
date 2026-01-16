@@ -4,6 +4,12 @@ variable "name_prefix" {
   default     = ""
 }
 
+variable "name_suffix" {
+  description = "(Optional) Global suffix for resource names. (e.g. environment)"
+  type        = string
+  default     = ""
+}
+
 variable "resource_group_name" {
   description = "(Optional) Existing Resource Group name. If this is not provided, a resource group will be created automatically."
   type        = string
@@ -119,17 +125,4 @@ variable "key_vault_soft_delete_retention_days" {
   description = "Soft delete retention in days."
   type        = number
   default     = 7
-}
-
-locals {
-  # Index secrets by name for easy for_each
-  app_secrets_by_name = {
-    for s in nonsensitive(var.app_secrets) : s.name => sensitive(s)
-  }
-
-  # App settings subset (only those with app_setting provided)
-  app_secret_bindings = {
-    for s in var.app_secrets : nonsensitive(s.app_setting_name) => nonsensitive(s.name)
-    if try(s.app_setting_name != null && length(trim(s.app_setting_name)) > 0, false)
-  }
 }

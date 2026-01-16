@@ -26,6 +26,7 @@ module "web_app" {
     source = "."
 
     name_prefix = "acme"
+    name_suffix = "dev"
     app_name = "orders-api"
 
     application_stack = {
@@ -81,6 +82,9 @@ After apply:
 ### Recommended
 - _name_prefix_ (string, default: "")
   - Optional global prefix for resource names.
+
+- _name_suffix_ (string, default: "")
+  - Optional global suffix for resource names. (e.g. environment name)
 
 - _app_settings_ (map(string), default: {})
   - Additional application settings to add to the Web App.
