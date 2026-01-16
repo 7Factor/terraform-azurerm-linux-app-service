@@ -118,13 +118,9 @@ variable "enable_system_assigned_identity" {
 
 variable "key_vault" {
   type = object({
-    sku = optional(string)
-    purge_protection_enabled = optional(bool)
-    soft_delete_retention_days = optional(number)
+    sku = optional(string, "standard")
+    purge_protection_enabled = optional(bool, false)
+    soft_delete_retention_days = optional(number, 7)
   })
-  default = {
-    sku = "standard"
-    purge_protection_enabled = false
-    soft_delete_retention_days = 7
-  }
+  default = {}
 }
