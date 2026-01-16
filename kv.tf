@@ -1,12 +1,21 @@
 locals {
-  create_kv = length(var.app_secrets) > 0
-  kv_base   = lower(replace(trim("${var.name_prefix}-${var.app_name}", "-"), "/[^a-z0-9-]/", ""))
+  kv_max_len = 24
+  create_kv  = length(var.app_secrets) > 0
+
+  unsafe_kv_base      = lower(replace(trim("${var.name_prefix}-kv-${var.app_name}-${var.name_suffix}", "-"), "/[^a-z0-9-]/", ""))
+  kv_base_over_budget = length(local.unsafe_kv_base) > local.kv_max_len ? length(local.unsafe_kv_base) - local.kv_max_len : 0
+  safe_app_name       = substr(var.app_name, 0, length(var.app_name) - local.kv_base_over_budget)
+  kv_base             = lower(replace(trim("${var.name_prefix}-kv-${local.safe_app_name}-${var.name_suffix}", "-"), "/[^a-z0-9-]/", ""))
+
+  app_secrets_by_name = {
+    for s in nonsensitive(var.app_secrets) : s.name => sensitive(s)
+  }
 }
 
 resource "azurerm_key_vault" "web_app" {
   count = local.create_kv ? 1 : 0
 
-  name                = substr(local.kv_base, 0, 24)
+  name                = local.kv_base
   location            = local.resource_group.location
   resource_group_name = local.resource_group.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
