@@ -1,5 +1,3 @@
-data "azurerm_client_config" "current" {}
-
 locals {
   create_kv = length(var.app_secrets) > 0
   kv_base   = lower(replace(trim("${var.name_prefix}-${var.app_name}", "-"), "/[^a-z0-9-]/", ""))
