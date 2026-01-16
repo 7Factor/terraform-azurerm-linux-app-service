@@ -110,19 +110,15 @@ variable "global_tags" {
   default     = {}
 }
 
-variable "key_vault_sku" {
-  type    = string
-  default = "standard"
-}
-
-variable "key_vault_purge_protection_enabled" {
-  description = "Enable purge protection on Key Vault."
-  type        = bool
-  default     = false
-}
-
-variable "key_vault_soft_delete_retention_days" {
-  description = "Soft delete retention in days."
-  type        = number
-  default     = 7
+variable "key_vault" {
+  type = object({
+    sku = optional(string)
+    purge_protection_enabled = optional(bool)
+    soft_delete_retention_days = optional(number)
+  })
+  default = {
+    sku = "standard"
+    purge_protection_enabled = false
+    soft_delete_retention_days = 7
+  }
 }

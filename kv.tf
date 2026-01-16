@@ -19,11 +19,11 @@ resource "azurerm_key_vault" "web_app" {
   location            = local.resource_group.location
   resource_group_name = local.resource_group.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
-  sku_name            = var.key_vault_sku
+  sku_name            = var.key_vault.sku
 
   rbac_authorization_enabled = true
-  purge_protection_enabled   = var.key_vault_purge_protection_enabled
-  soft_delete_retention_days = var.key_vault_soft_delete_retention_days
+  purge_protection_enabled   = var.key_vault.purge_protection_enabled
+  soft_delete_retention_days = var.key_vault.soft_delete_retention_days
 
   tags = var.global_tags
 }

@@ -126,11 +126,8 @@ After apply:
 - _diagnostic_metric_categories_ (list(string), default: ["AllMetrics"])
   - List of metric categories to enable for diagnostic settings.
 
-- _key_vault_sku_ (string, default: "standard")
-  - If no `app_secrets` are provided, this value is ignored
-
-- _key_vault_purge_protection_enabled_ (bool, default: false)
-  - If no `app_secrets` are provided, this value is ignored
-
-- _key_vault_soft_delete_retention_days_ (number, default: 7)
-  - If no `app_secrets` are provided, this value is ignored
+- _key_vault_ (object, default: {})
+  - **Note**: If no `app_secrets` are provided, all values in this block are ignored.
+  - _sku_ (string, default: "standard")
+  - _purge_protection_enabled_ (bool, default: false)
+  - _soft_delete_retention_days_ (number, default: 7)
