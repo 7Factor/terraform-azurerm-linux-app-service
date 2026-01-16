@@ -23,45 +23,46 @@ Spin up an opinionated Azure Web App quickly, with:
 Basic example:
 ```hcl-terraform
 module "web_app" {
-    source = "."
+  source  = "7Factor/linux-app-service/azurerm"
+  version = "=> 0"
 
-    name_prefix = "acme"
-    name_suffix = "dev"
-    app_name = "orders-api"
+  name_prefix = "acme"
+  name_suffix = "dev"
+  app_name    = "orders-api"
 
-    application_stack = {
-      dotnet_version = "10.0"
+  application_stack = {
+    dotnet_version = "10.0"
+  }
+
+  # Optional: App settings passed directly to the Web App
+  app_settings = {
+    ASPNETCORE_URLS = "http://0.0.0.0:8080"
+  }
+
+  # Optional: Link Key Vault secrets and bind to app settings
+  app_secrets = [
+    {
+      name             = "Db-ConnectionString"
+      app_setting_name = "ConnectionStrings__Database"
+      initial_value    = "sample" # optional - defaults to ""
+    },
+    {
+      name             = "Api-Key"
+      app_setting_name = "MyApi__Key"
+    },
+    {
+      name = "Unbound-Secret"
+      # app_setting omitted; secret is created in Key Vault but not bound to app settings
     }
+  ]
 
-    # Optional: App settings passed directly to the Web App
-    app_settings = {
-      ASPNETCORE_URLS = "http://0.0.0.0:8080"
-    }
+  # Optional: Centralized logging
+  # log_analytics_workspace_id = "/subscriptions//resourceGroups//providers/Microsoft.OperationalInsights/workspaces/"
 
-    # Optional: Link Key Vault secrets and bind to app settings
-    app_secrets = [
-      {
-        name             = "Db-ConnectionString"
-        app_setting_name = "ConnectionStrings__Database"
-        initial_value    = "sample" # optional - defaults to ""
-      },
-      {
-        name             = "Api-Key"
-        app_setting_name = "MyApi__Key"
-      },
-      {
-        name = "Unbound-Secret"
-        # app_setting omitted; secret is created in Key Vault but not bound to app settings
-      }
-    ]
-
-    # Optional: Centralized logging
-    # log_analytics_workspace_id = "/subscriptions//resourceGroups//providers/Microsoft.OperationalInsights/workspaces/"
-
-    global_tags = {
-      environment = "dev"
-      owner = "platform-team"
-    }
+  global_tags = {
+    environment = "dev"
+    owner       = "platform-team"
+  }
 }
 ```
 
