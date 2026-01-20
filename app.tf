@@ -63,7 +63,7 @@ resource "azurerm_linux_web_app" "web_app" {
     },
     length(local.app_secret_bindings) > 0 ? {
       for app_setting_key, secret_name in local.app_secret_bindings :
-      app_setting_key => "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.web_app[0].vault_uri}secrets/${secret_name}/)"
+      app_setting_key => "@Microsoft.KeyVault(SecretUri=${local.key_vault.vault_uri}secrets/${secret_name}/)"
     } : {}
   )
 

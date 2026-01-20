@@ -135,6 +135,8 @@ After apply:
   - _sku_ (string, default: "standard")
   - _purge_protection_enabled_ (bool, default: false)
   - _soft_delete_retention_days_ (number, default: 7)
+  - _existing_name_ (string, default: null)
+  - _existing_rg_name_ (string, default: null)
 
 - _private_acr_id_ (string, default: null)
   - Optional ID of a private ACR for pulling container images

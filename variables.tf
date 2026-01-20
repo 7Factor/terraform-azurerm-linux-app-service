@@ -121,6 +121,8 @@ variable "key_vault" {
     sku                        = optional(string, "standard")
     purge_protection_enabled   = optional(bool, false)
     soft_delete_retention_days = optional(number, 7)
+    existing_name              = optional(string, null)
+    existing_rg_name           = optional(string, null)
   })
   default = {}
 }
