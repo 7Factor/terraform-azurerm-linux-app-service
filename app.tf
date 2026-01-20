@@ -4,6 +4,14 @@ resource "azurerm_user_assigned_identity" "web_app" {
   name                = trim("${var.name_prefix}-id-${var.app_name}-${var.name_suffix}", "-")
 }
 
+resource "azurerm_role_assignment" "acr_pull" {
+  count = var.private_acr_id != null ? 1 : 0
+
+  scope                = var.private_acr_id
+  role_definition_name = "AcrPull"
+  principal_id         = azurerm_user_assigned_identity.web_app.principal_id
+}
+
 locals {
   app_secret_bindings = {
     for s in nonsensitive(var.app_secrets) : s.app_setting_name => s.name
@@ -26,6 +34,9 @@ resource "azurerm_linux_web_app" "web_app" {
   }
 
   site_config {
+    container_registry_use_managed_identity       = var.private_acr_id != null
+    container_registry_managed_identity_client_id = var.private_acr_id != null ? azurerm_user_assigned_identity.web_app.client_id : null
+
     application_stack {
       docker_image_name        = var.application_stack.docker_image_name
       docker_registry_url      = var.application_stack.docker_registry_url
@@ -52,7 +63,7 @@ resource "azurerm_linux_web_app" "web_app" {
     },
     length(local.app_secret_bindings) > 0 ? {
       for app_setting_key, secret_name in local.app_secret_bindings :
-      app_setting_key => "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault.web_app[0].vault_uri}secrets/${secret_name}/)"
+      app_setting_key => "@Microsoft.KeyVault(SecretUri=${local.key_vault.vault_uri}secrets/${secret_name}/)"
     } : {}
   )
 

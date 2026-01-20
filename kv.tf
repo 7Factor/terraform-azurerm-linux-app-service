@@ -10,10 +10,12 @@ locals {
   app_secrets_by_name = {
     for s in nonsensitive(var.app_secrets) : s.name => sensitive(s)
   }
+
+  key_vault = var.key_vault.existing_name != null ? data.azurerm_key_vault.web_app[0] : azurerm_key_vault.web_app[0]
 }
 
 resource "azurerm_key_vault" "web_app" {
-  count = local.create_kv ? 1 : 0
+  count = local.create_kv && var.key_vault.existing_name == null ? 1 : 0
 
   name                = local.kv_base
   location            = local.resource_group.location
@@ -31,9 +33,16 @@ resource "azurerm_key_vault" "web_app" {
 resource "azurerm_role_assignment" "webapp_kv_reader" {
   count = local.create_kv ? 1 : 0
 
-  scope                = azurerm_key_vault.web_app[0].id
+  scope                = local.key_vault.id
   role_definition_name = "Key Vault Secrets User"
   principal_id         = azurerm_user_assigned_identity.web_app.principal_id
+}
+
+data "azurerm_key_vault" "web_app" {
+  count = var.key_vault.existing_name != null ? 1 : 0
+
+  name                = var.key_vault.existing_name
+  resource_group_name = var.key_vault.existing_rg_name != null ? var.key_vault.existing_rg_name : var.resource_group_name
 }
 
 resource "azurerm_key_vault_secret" "linked" {
@@ -41,7 +50,7 @@ resource "azurerm_key_vault_secret" "linked" {
 
   name         = each.key
   value        = coalesce(each.value.initial_value, "")
-  key_vault_id = azurerm_key_vault.web_app[0].id
+  key_vault_id = local.key_vault.id
 
   lifecycle {
     ignore_changes = [value]

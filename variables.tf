@@ -118,9 +118,17 @@ variable "enable_system_assigned_identity" {
 
 variable "key_vault" {
   type = object({
-    sku = optional(string, "standard")
-    purge_protection_enabled = optional(bool, false)
+    sku                        = optional(string, "standard")
+    purge_protection_enabled   = optional(bool, false)
     soft_delete_retention_days = optional(number, 7)
+    existing_name              = optional(string, null)
+    existing_rg_name           = optional(string, null)
   })
   default = {}
+}
+
+variable "private_acr_id" {
+  description = "Optional ID of a private ACR for pulling container images"
+  type        = string
+  default     = null
 }
