@@ -38,7 +38,7 @@ variable "app_secrets" {
   type = list(object({
     name             = string
     app_setting_name = optional(string)
-    initial_value    = optional(string, "")
+    initial_value    = optional(string)
   }))
   default   = []
   sensitive = true
