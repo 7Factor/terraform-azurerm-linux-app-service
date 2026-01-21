@@ -49,7 +49,7 @@ resource "azurerm_key_vault_secret" "linked" {
   for_each = local.app_secrets_by_name
 
   name         = each.key
-  value        = coalesce(each.value.initial_value, "")
+  value        = each.value.initial_value != null ? each.value.initial_value : ""
   key_vault_id = local.key_vault.id
 
   lifecycle {

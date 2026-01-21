@@ -93,7 +93,7 @@ After apply:
 - _app_secrets_ (list(object), default: [])
   - **name** (string, required): Key Vault secret name.
   - _app_setting_ (string, optional): App setting key to bind via Key Vault reference. If omitted, the secret is created but not bound.
-  - _initial_value_ (string, optional, default ""): Seed value for first deploy. Subsequent changes are ignored. Populate/rotate via Azure Portal or CI.
+  - _initial_value_ (string, optional): Seed value for first deploy. Subsequent changes are ignored. Populate/rotate via Azure Portal or CI.
 
 - _application_stack_ (object)
   - An [application_stack](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_web_app#application_stack-1) block
