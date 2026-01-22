@@ -91,6 +91,13 @@ resource "azurerm_linux_web_app" "web_app" {
 
   tags = var.global_tags
 
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to these tags as they may be managed externally
+      tags["hidden-link: /app-insights-resource-id"],
+    ]
+  }
+
   depends_on = [
     azurerm_role_assignment.webapp_kv_reader
   ]
