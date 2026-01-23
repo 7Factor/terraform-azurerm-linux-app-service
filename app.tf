@@ -14,9 +14,8 @@ resource "azurerm_role_assignment" "acr_pull" {
 
 locals {
   app_secret_bindings = {
-    for s in nonsensitive(var.app_secrets) :
-    try(s.app_setting_name, "") => s.name
-    if length(try(s.app_setting_name, "")) > 0
+    for s in nonsensitive(var.app_secrets) : s.app_setting_name => s.name
+    if s.app_setting_name != null && length(s.app_setting_name) > 0
   }
 }
 
