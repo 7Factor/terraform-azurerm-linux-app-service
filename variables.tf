@@ -68,6 +68,30 @@ variable "application_stack" {
   default = {}
 }
 
+variable "site_config" {
+  type = object({
+    always_on                          = optional(bool)
+    api_definition_url                 = optional(string)
+    api_management_api_id              = optional(string)
+    app_command_line                   = optional(string)
+    default_documents                  = optional(list(string))
+    ftps_state                         = optional(string)
+    health_check_path                  = optional(string)
+    health_check_eviction_time_in_min  = optional(number)
+    load_balancing_mode                = optional(string)
+    minimum_tls_version                = optional(string)
+    use_32_bit_worker                  = optional(bool, false)
+    websockets_enabled                 = optional(bool)
+    worker_count                       = optional(number)
+    https_only                         = optional(bool)
+    client_affinity_enabled            = optional(bool)
+    client_certificate_enabled         = optional(bool)
+    client_certificate_mode            = optional(string)
+    client_certificate_exclusion_paths = optional(string)
+  })
+  default = {}
+}
+
 variable "service_plan_sku" {
   description = "App Service Plan size within the tier, e.g., B2."
   type        = string

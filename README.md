@@ -98,6 +98,14 @@ After apply:
 - _application_stack_ (object)
   - An [application_stack](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_web_app#application_stack-1) block
 
+- _site_config_ (object)
+  - A [site_config](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_web_app#site_config-1) block, with the following additions:
+    - _https_only_ (bool, default: null)
+    - _client_affinity_enabled_ (bool, default: null)
+    - _client_certificate_enabled_ (bool, default: null)
+    - _client_certificate_mode_ (string, default: null)
+    - _client_certificate_exclusion_paths_ (string, default: null)
+
 - _log_analytics_workspace_id_ (string, default: null)
   - If provided, Application Insights is workspace-based and diagnostic settings send logs/metrics to this workspace.
 

@@ -26,6 +26,12 @@ resource "azurerm_linux_web_app" "web_app" {
   service_plan_id                 = local.service_plan_id
   key_vault_reference_identity_id = azurerm_user_assigned_identity.web_app.id
 
+  https_only                         = var.site_config.https_only
+  client_affinity_enabled            = var.site_config.client_affinity_enabled
+  client_certificate_enabled         = var.site_config.client_certificate_enabled
+  client_certificate_mode            = var.site_config.client_certificate_mode
+  client_certificate_exclusion_paths = var.site_config.client_certificate_exclusion_paths
+
   identity {
     type = var.enable_system_assigned_identity ? "SystemAssigned, UserAssigned" : "UserAssigned"
     identity_ids = [
@@ -34,6 +40,22 @@ resource "azurerm_linux_web_app" "web_app" {
   }
 
   site_config {
+    http2_enabled = true
+
+    always_on                         = var.site_config.always_on
+    api_definition_url                = var.site_config.api_definition_url
+    api_management_api_id             = var.site_config.api_management_api_id
+    app_command_line                  = var.site_config.app_command_line
+    default_documents                 = var.site_config.default_documents
+    ftps_state                        = var.site_config.ftps_state
+    health_check_path                 = var.site_config.health_check_path
+    health_check_eviction_time_in_min = var.site_config.health_check_eviction_time_in_min
+    load_balancing_mode               = var.site_config.load_balancing_mode
+    minimum_tls_version               = var.site_config.minimum_tls_version
+    use_32_bit_worker                 = var.site_config.use_32_bit_worker
+    websockets_enabled                = var.site_config.websockets_enabled
+    worker_count                      = var.site_config.worker_count
+
     container_registry_use_managed_identity       = var.private_acr_id != null
     container_registry_managed_identity_client_id = var.private_acr_id != null ? azurerm_user_assigned_identity.web_app.client_id : null
 
@@ -68,6 +90,13 @@ resource "azurerm_linux_web_app" "web_app" {
   )
 
   tags = var.global_tags
+
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to these tags as they may be managed externally
+      tags["hidden-link: /app-insights-resource-id"],
+    ]
+  }
 
   depends_on = [
     azurerm_role_assignment.webapp_kv_reader
