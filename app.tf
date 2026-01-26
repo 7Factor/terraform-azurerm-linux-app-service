@@ -55,6 +55,7 @@ resource "azurerm_linux_web_app" "web_app" {
     use_32_bit_worker                 = var.site_config.use_32_bit_worker
     websockets_enabled                = var.site_config.websockets_enabled
     worker_count                      = var.site_config.worker_count
+    vnet_route_all_enabled            = var.site_config.vnet_route_all_enabled
 
     container_registry_use_managed_identity       = var.private_acr_id != null
     container_registry_managed_identity_client_id = var.private_acr_id != null ? azurerm_user_assigned_identity.web_app.client_id : null
@@ -73,6 +74,11 @@ resource "azurerm_linux_web_app" "web_app" {
       php_version              = var.application_stack.php_version
       python_version           = var.application_stack.python_version
       ruby_version             = var.application_stack.ruby_version
+    }
+
+    cors {
+      allowed_origins     = var.cors.allowed_origins
+      support_credentials = var.cors.support_credentials
     }
   }
 

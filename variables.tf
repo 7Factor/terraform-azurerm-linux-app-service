@@ -88,6 +88,15 @@ variable "site_config" {
     client_certificate_enabled         = optional(bool)
     client_certificate_mode            = optional(string)
     client_certificate_exclusion_paths = optional(string)
+    vnet_route_all_enabled             = optional(bool)
+  })
+  default = {}
+}
+
+variable "cors" {
+  type = object({
+    allowed_origins     = optional(list(string))
+    support_credentials = optional(bool)
   })
   default = {}
 }
