@@ -112,6 +112,7 @@ variable "site_config" {
     load_balancing_mode                = optional(string)
     minimum_tls_version                = optional(string)
     use_32_bit_worker                  = optional(bool, false)
+    virtual_network_subnet_id          = optional(string)
     vnet_route_all_enabled             = optional(bool)
     websockets_enabled                 = optional(bool)
     worker_count                       = optional(number)

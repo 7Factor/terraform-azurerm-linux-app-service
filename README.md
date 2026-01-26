@@ -113,6 +113,7 @@ After apply:
     - _client_certificate_enabled_ (bool, default: null)
     - _client_certificate_mode_ (string, default: null)
     - _client_certificate_exclusion_paths_ (string, default: null)
+    - _virtual_network_subnet_id_ (string, default: null)
 
 - _log_analytics_workspace_id_ (string, default: null)
   - If provided, Application Insights is workspace-based and diagnostic settings send logs/metrics to this workspace.
