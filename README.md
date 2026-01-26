@@ -157,3 +157,6 @@ After apply:
 
 - _private_acr_id_ (string, default: null)
   - Optional ID of a private ACR for pulling container images
+
+- _ignore_changes_ (object, default: {})
+  - _zip_deploy_file_ (bool, default: false): If true, terraform will ignore any changes to the zip_deploy_file attribute

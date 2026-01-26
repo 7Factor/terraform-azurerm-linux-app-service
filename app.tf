@@ -105,10 +105,15 @@ resource "azurerm_linux_web_app" "web_app" {
   tags = var.global_tags
 
   lifecycle {
-    ignore_changes = [
-      # Ignore changes to these tags as they may be managed externally
-      tags["hidden-link: /app-insights-resource-id"],
-    ]
+    ignore_changes = concat(
+      [
+        # Ignore changes to these tags as they may be managed externally
+        tags["hidden-link: /app-insights-resource-id"],
+      ],
+      var.ignore_changes.zip_deploy_file ? [
+        zip_deploy_file
+      ] : []
+    )
   }
 
   depends_on = [

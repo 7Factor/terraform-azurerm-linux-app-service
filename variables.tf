@@ -192,3 +192,10 @@ variable "private_acr_id" {
   type        = string
   default     = null
 }
+
+variable "ignore_changes" {
+  type = object({
+    zip_deploy_file = optional(bool, false)
+  })
+  default = {}
+}
