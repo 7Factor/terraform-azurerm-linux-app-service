@@ -13,11 +13,9 @@ locals {
     resource_type = "kv"
   }))
 
-  app_secrets_by_name = {
-    for s in nonsensitive(var.app_secrets) : s.name => sensitive(s)
-  }
-
   key_vault = var.key_vault.existing_name != null ? data.azurerm_key_vault.web_app[0] : azurerm_key_vault.web_app[0]
+
+  needs_kv_role = length(local.app_secret_bindings) > 0
 }
 
 resource "azurerm_key_vault" "web_app" {
@@ -37,11 +35,11 @@ resource "azurerm_key_vault" "web_app" {
 }
 
 resource "azurerm_role_assignment" "webapp_kv_reader" {
-  count = local.create_kv ? 1 : 0
+  count = local.needs_kv_role ? 1 : 0
 
   scope                = local.key_vault.id
   role_definition_name = "Key Vault Secrets User"
-  principal_id         = azurerm_user_assigned_identity.web_app.principal_id
+  principal_id         = azurerm_user_assigned_identity.web_app[0].principal_id
 }
 
 data "azurerm_key_vault" "web_app" {

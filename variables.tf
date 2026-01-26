@@ -64,6 +64,16 @@ variable "app_secrets" {
   }
 }
 
+locals {
+  app_secrets_by_name = {
+    for s in nonsensitive(var.app_secrets) : s.name => sensitive(s)
+  }
+  app_secret_bindings = {
+    for s in nonsensitive(var.app_secrets) : s.app_setting_name => s.name
+    if s.app_setting_name != null && length(s.app_setting_name) > 0
+  }
+}
+
 variable "application_stack" {
   type = object({
     docker_image_name        = optional(string)

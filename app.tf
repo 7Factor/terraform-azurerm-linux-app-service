@@ -1,4 +1,14 @@
+locals {
+  needs_acr_role = var.private_acr_id != null
+  needs_managed_identity = local.needs_kv_role || local.needs_acr_role
+
+  # Identity type to use if the service needs a user-assigned identity
+  assigned_identity_type = var.enable_system_assigned_identity ? "SystemAssigned, UserAssigned" : "UserAssigned"
+}
+
 resource "azurerm_user_assigned_identity" "web_app" {
+  count = local.needs_managed_identity ? 1 : 0
+
   location            = local.resource_group.location
   resource_group_name = local.resource_group.name
   name = templatestring(var.resource_name_options.template, merge(local.name_template_vars, {
@@ -7,18 +17,11 @@ resource "azurerm_user_assigned_identity" "web_app" {
 }
 
 resource "azurerm_role_assignment" "acr_pull" {
-  count = var.private_acr_id != null ? 1 : 0
+  count = local.needs_acr_role ? 1 : 0
 
   scope                = var.private_acr_id
   role_definition_name = "AcrPull"
-  principal_id         = azurerm_user_assigned_identity.web_app.principal_id
-}
-
-locals {
-  app_secret_bindings = {
-    for s in nonsensitive(var.app_secrets) : s.app_setting_name => s.name
-    if s.app_setting_name != null && length(s.app_setting_name) > 0
-  }
+  principal_id         = azurerm_user_assigned_identity.web_app[0].principal_id
 }
 
 resource "azurerm_linux_web_app" "web_app" {
@@ -28,7 +31,7 @@ resource "azurerm_linux_web_app" "web_app" {
   resource_group_name             = local.resource_group.name
   location                        = local.resource_group.location
   service_plan_id                 = local.service_plan_id
-  key_vault_reference_identity_id = azurerm_user_assigned_identity.web_app.id
+  key_vault_reference_identity_id = azurerm_user_assigned_identity.web_app[0].id
 
   https_only                         = var.site_config.https_only
   client_affinity_enabled            = var.site_config.client_affinity_enabled
@@ -37,10 +40,10 @@ resource "azurerm_linux_web_app" "web_app" {
   client_certificate_exclusion_paths = var.site_config.client_certificate_exclusion_paths
 
   identity {
-    type = var.enable_system_assigned_identity ? "SystemAssigned, UserAssigned" : "UserAssigned"
-    identity_ids = [
-      azurerm_user_assigned_identity.web_app.id
-    ]
+    type = local.needs_managed_identity ? local.assigned_identity_type : "SystemAssigned"
+    identity_ids = local.needs_managed_identity ? [
+      azurerm_user_assigned_identity.web_app[0].id
+    ] : null
   }
 
   site_config {
@@ -60,8 +63,8 @@ resource "azurerm_linux_web_app" "web_app" {
     websockets_enabled                = var.site_config.websockets_enabled
     worker_count                      = var.site_config.worker_count
 
-    container_registry_use_managed_identity       = var.private_acr_id != null
-    container_registry_managed_identity_client_id = var.private_acr_id != null ? azurerm_user_assigned_identity.web_app.client_id : null
+    container_registry_use_managed_identity       = local.needs_acr_role
+    container_registry_managed_identity_client_id = local.needs_acr_role ? azurerm_user_assigned_identity.web_app[0].client_id : null
 
     application_stack {
       docker_image_name        = var.application_stack.docker_image_name
