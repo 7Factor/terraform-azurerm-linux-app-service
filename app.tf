@@ -44,8 +44,6 @@ resource "azurerm_linux_web_app" "web_app" {
   }
 
   site_config {
-    http2_enabled = true
-
     always_on                         = var.site_config.always_on
     api_definition_url                = var.site_config.api_definition_url
     api_management_api_id             = var.site_config.api_management_api_id
@@ -54,12 +52,13 @@ resource "azurerm_linux_web_app" "web_app" {
     ftps_state                        = var.site_config.ftps_state
     health_check_path                 = var.site_config.health_check_path
     health_check_eviction_time_in_min = var.site_config.health_check_eviction_time_in_min
+    http2_enabled                     = var.site_config.http2_enabled
     load_balancing_mode               = var.site_config.load_balancing_mode
     minimum_tls_version               = var.site_config.minimum_tls_version
     use_32_bit_worker                 = var.site_config.use_32_bit_worker
+    vnet_route_all_enabled            = var.site_config.vnet_route_all_enabled
     websockets_enabled                = var.site_config.websockets_enabled
     worker_count                      = var.site_config.worker_count
-    vnet_route_all_enabled            = var.site_config.vnet_route_all_enabled
 
     container_registry_use_managed_identity       = var.private_acr_id != null
     container_registry_managed_identity_client_id = var.private_acr_id != null ? azurerm_user_assigned_identity.web_app.client_id : null
