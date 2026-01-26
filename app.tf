@@ -31,7 +31,7 @@ resource "azurerm_linux_web_app" "web_app" {
   resource_group_name             = local.resource_group.name
   location                        = local.resource_group.location
   service_plan_id                 = local.service_plan_id
-  key_vault_reference_identity_id = azurerm_user_assigned_identity.web_app[0].id
+  key_vault_reference_identity_id = local.needs_kv_role ? azurerm_user_assigned_identity.web_app[0].id : null
 
   https_only                         = var.site_config.https_only
   client_affinity_enabled            = var.site_config.client_affinity_enabled
