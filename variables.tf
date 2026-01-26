@@ -1,13 +1,24 @@
-variable "name_prefix" {
-  description = "(Optional) Global prefix for resource names."
-  type        = string
-  default     = ""
+variable "resource_name_options" {
+  description = "(Optional) Options to adjust how resource names are generated"
+  type = object({
+    template      = optional(string)
+    template_safe = optional(string)
+  })
+  default = {
+    template      = "$${resource_type}-$${app_name}"
+    template_safe = "$${resource_type}$${app_name}"
+  }
+
+  validation {
+    condition     = can(regex("^[A-Za-z0-9]+$", templatestring(var.resource_name_options.template_safe, { resource_type = "", app_name = "" })))
+    error_message = "The template_safe value must contain only alphanumeric characters."
+  }
 }
 
-variable "name_suffix" {
-  description = "(Optional) Global suffix for resource names. (e.g. environment)"
-  type        = string
-  default     = ""
+locals {
+  name_template_vars = {
+    app_name = var.app_name
+  }
 }
 
 variable "resource_group_name" {
@@ -25,6 +36,10 @@ variable "location" {
 variable "app_name" {
   description = "Base name for the App Service (combined with prefix)."
   type        = string
+}
+
+locals {
+  safe_app_name = replace(trim(lower(var.app_name), "-"), "/[^a-z0-9]/", "")
 }
 
 variable "app_settings" {
