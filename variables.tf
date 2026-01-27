@@ -1,13 +1,29 @@
-variable "name_prefix" {
-  description = "(Optional) Global prefix for resource names."
-  type        = string
-  default     = ""
+variable "resource_name_options" {
+  description = "(Optional) Options to adjust how resource names are generated"
+  type = object({
+    template      = optional(string)
+    template_safe = optional(string)
+  })
+  default = {
+    template      = "$${resource_type}-$${app_name}"
+    template_safe = "$${resource_type}$${app_name}"
+  }
+
+  validation {
+    condition     = can(regex("^[A-Za-z0-9-]+$", templatestring(var.resource_name_options.template, { resource_type = "", app_name = "" })))
+    error_message = "The template value must contain only alphanumeric characters and hyphens."
+  }
+
+  validation {
+    condition     = can(regex("^[A-Za-z0-9]+$", templatestring(var.resource_name_options.template_safe, { resource_type = "", app_name = "" })))
+    error_message = "The template_safe value must contain only alphanumeric characters."
+  }
 }
 
-variable "name_suffix" {
-  description = "(Optional) Global suffix for resource names. (e.g. environment)"
-  type        = string
-  default     = ""
+locals {
+  name_template_vars = {
+    app_name = var.app_name
+  }
 }
 
 variable "resource_group_name" {
@@ -25,6 +41,10 @@ variable "location" {
 variable "app_name" {
   description = "Base name for the App Service (combined with prefix)."
   type        = string
+}
+
+locals {
+  safe_app_name = replace(trim(lower(var.app_name), "-"), "/[^a-z0-9]/", "")
 }
 
 variable "app_settings" {
@@ -46,6 +66,16 @@ variable "app_secrets" {
   validation {
     condition     = length([for s in var.app_secrets : s.name]) == length(distinct([for s in var.app_secrets : s.name]))
     error_message = "Each app_secrets entry must have a unique 'name'."
+  }
+}
+
+locals {
+  app_secrets_by_name = {
+    for s in nonsensitive(var.app_secrets) : s.name => sensitive(s)
+  }
+  app_secret_bindings = {
+    for s in nonsensitive(var.app_secrets) : s.app_setting_name => s.name
+    if s.app_setting_name != null && length(s.app_setting_name) > 0
   }
 }
 
@@ -74,20 +104,31 @@ variable "site_config" {
     api_definition_url                 = optional(string)
     api_management_api_id              = optional(string)
     app_command_line                   = optional(string)
+    client_affinity_enabled            = optional(bool)
+    client_certificate_enabled         = optional(bool)
+    client_certificate_exclusion_paths = optional(string)
+    client_certificate_mode            = optional(string)
     default_documents                  = optional(list(string))
     ftps_state                         = optional(string)
     health_check_path                  = optional(string)
     health_check_eviction_time_in_min  = optional(number)
+    http2_enabled                      = optional(bool, true)
+    https_only                         = optional(bool)
     load_balancing_mode                = optional(string)
     minimum_tls_version                = optional(string)
     use_32_bit_worker                  = optional(bool, false)
+    virtual_network_subnet_id          = optional(string)
+    vnet_route_all_enabled             = optional(bool)
     websockets_enabled                 = optional(bool)
     worker_count                       = optional(number)
-    https_only                         = optional(bool)
-    client_affinity_enabled            = optional(bool)
-    client_certificate_enabled         = optional(bool)
-    client_certificate_mode            = optional(string)
-    client_certificate_exclusion_paths = optional(string)
+  })
+  default = {}
+}
+
+variable "cors" {
+  type = object({
+    allowed_origins     = optional(list(string))
+    support_credentials = optional(bool)
   })
   default = {}
 }

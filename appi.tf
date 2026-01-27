@@ -1,5 +1,7 @@
 resource "azurerm_application_insights" "web_app" {
-  name                = trim("${var.name_prefix}-appi-${var.app_name}-${var.name_suffix}", "-")
+  name = templatestring(var.resource_name_options.template, merge(local.name_template_vars, {
+    resource_type = "appi"
+  }))
   resource_group_name = local.resource_group.name
   location            = local.resource_group.location
 

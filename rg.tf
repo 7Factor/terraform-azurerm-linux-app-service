@@ -2,7 +2,9 @@ resource "azurerm_resource_group" "web_app" {
   count = var.resource_group_name == null ? 1 : 0
 
   location = var.location
-  name     = trim("${var.name_prefix}-rg-${var.app_name}-${var.name_suffix}", "-")
+  name = templatestring(var.resource_name_options.template, merge(local.name_template_vars, {
+    resource_type = "rg"
+  }))
 
   tags = merge(
     var.global_tags,

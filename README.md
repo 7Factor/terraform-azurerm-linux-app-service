@@ -22,13 +22,23 @@ Spin up an opinionated Azure Web App quickly, with:
 
 Basic example:
 ```hcl-terraform
+locals {
+  env_name = "dev"
+}
+
 module "web_app" {
   source  = "7Factor/linux-app-service/azurerm"
-  version = "=> 0"
+  version = "=> 1"
 
-  name_prefix = "acme"
-  name_suffix = "dev"
   app_name    = "orders-api"
+  resource_name_options = {
+    # Available template variables are `app_name` and `resource_type`, which must be escaped with a double dollar sign.
+    # You can use other locals or variables in the string by using a single dollar sign (see below).
+    # Ex. This `template` will resolve to `acme-rg-orders-api-dev` for a resource group
+    template = "acme-$${resource_type}-$${app_name}-${local.env_name}"
+    # Ex. This `template_safe` will resolve to `acmekvordersapidev` for a Key Vault resource.
+    template_safe = "acme$${resource_type}$${app_name}${local.env_name}"
+  }
 
   application_stack = {
     dotnet_version = "10.0"
@@ -81,11 +91,9 @@ After apply:
   - Base name for resources (combined with prefix).
 
 ### Recommended
-- _name_prefix_ (string, default: "")
-  - Optional global prefix for resource names.
-
-- _name_suffix_ (string, default: "")
-  - Optional global suffix for resource names. (e.g. environment name)
+- _resource_name_options_ (object, default: {}): Options to adjust how resource names are generated
+  - _template_ (string, default: `"$${resource_type}-$${app_name}"`): A template string for generating standard resource names.
+  - _template_safe_ (string, default: `"$${resource_type}$${app_name}"`): A template string for generating resource names for resource types with restrictive naming requirements (Key Vault and Blob Storage)
 
 - _app_settings_ (map(string), default: {})
   - Additional application settings to add to the Web App.
@@ -105,6 +113,7 @@ After apply:
     - _client_certificate_enabled_ (bool, default: null)
     - _client_certificate_mode_ (string, default: null)
     - _client_certificate_exclusion_paths_ (string, default: null)
+    - _virtual_network_subnet_id_ (string, default: null)
 
 - _log_analytics_workspace_id_ (string, default: null)
   - If provided, Application Insights is workspace-based and diagnostic settings send logs/metrics to this workspace.
@@ -148,3 +157,6 @@ After apply:
 
 - _private_acr_id_ (string, default: null)
   - Optional ID of a private ACR for pulling container images
+
+- _ignore_changes_ (object, default: {})
+  - _zip_deploy_file_ (bool, default: false): If true, terraform will ignore any changes to the zip_deploy_file attribute
