@@ -1,5 +1,5 @@
 locals {
-  needs_acr_role = var.private_acr_id != null
+  needs_acr_role         = var.private_acr_id != null
   needs_managed_identity = local.needs_kv_role || local.needs_acr_role
 
   # Identity type to use if the service needs a user-assigned identity
