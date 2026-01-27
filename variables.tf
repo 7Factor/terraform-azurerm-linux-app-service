@@ -10,6 +10,11 @@ variable "resource_name_options" {
   }
 
   validation {
+    condition     = can(regex("^[A-Za-z0-9-]+$", templatestring(var.resource_name_options.template, { resource_type = "", app_name = "" })))
+    error_message = "The template value must contain only alphanumeric characters and hyphens."
+  }
+
+  validation {
     condition     = can(regex("^[A-Za-z0-9]+$", templatestring(var.resource_name_options.template_safe, { resource_type = "", app_name = "" })))
     error_message = "The template_safe value must contain only alphanumeric characters."
   }
