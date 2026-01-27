@@ -99,7 +99,7 @@ resource "azurerm_linux_web_app" "web_app" {
   }
 
   app_settings = merge(
-    terraform_data.app_settings.output,
+    terraform_data.app_settings.input,
     {
       "APPLICATIONINSIGHTS_CONNECTION_STRING"      = azurerm_application_insights.web_app.connection_string
     },
