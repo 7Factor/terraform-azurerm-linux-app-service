@@ -24,6 +24,15 @@ resource "azurerm_role_assignment" "acr_pull" {
   principal_id         = azurerm_user_assigned_identity.web_app[0].principal_id
 }
 
+# Use this terraform_data resource as a proxy for var.app_settings, so we can see changes to app_settings even 
+# if some other values (like related to app insights or keyvault) are not known until after the terraform is applied
+resource "terraform_data" "app_settings" {
+  input = merge(var.app_settings, {
+    "ApplicationInsightsAgent_EXTENSION_VERSION" = "~3"
+    "XDT_MicrosoftApplicationInsights_Mode"      = "recommended"
+  })
+}
+
 resource "azurerm_linux_web_app" "web_app" {
   name = templatestring(var.resource_name_options.template, merge(local.name_template_vars, {
     resource_type = "app"
@@ -90,11 +99,9 @@ resource "azurerm_linux_web_app" "web_app" {
   }
 
   app_settings = merge(
-    var.app_settings,
+    terraform_data.app_settings.input,
     {
       "APPLICATIONINSIGHTS_CONNECTION_STRING"      = azurerm_application_insights.web_app.connection_string
-      "ApplicationInsightsAgent_EXTENSION_VERSION" = "~3"
-      "XDT_MicrosoftApplicationInsights_Mode"      = "recommended"
     },
     length(local.app_secret_bindings) > 0 ? {
       for app_setting_key, secret_name in local.app_secret_bindings :
