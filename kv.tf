@@ -13,9 +13,9 @@ locals {
     resource_type = "kv"
   }))
 
+  key_vault = try(data.azurerm_key_vault.web_app[0], azurerm_key_vault.web_app[0], null)
+  
   needs_kv_role = length(local.app_secret_bindings) > 0
-
-  key_vault = local.needs_kv_role ? var.key_vault.existing_name != null ? data.azurerm_key_vault.web_app[0] : azurerm_key_vault.web_app[0] : null
 }
 
 resource "azurerm_key_vault" "web_app" {
