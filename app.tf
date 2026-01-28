@@ -101,12 +101,9 @@ resource "azurerm_linux_web_app" "web_app" {
   app_settings = merge(
     terraform_data.app_settings.input,
     {
-      "APPLICATIONINSIGHTS_CONNECTION_STRING"      = azurerm_application_insights.web_app.connection_string
+      "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.web_app.connection_string
     },
-    length(local.app_secret_bindings) > 0 ? {
-      for app_setting_key, secret_name in local.app_secret_bindings :
-      app_setting_key => "@Microsoft.KeyVault(SecretUri=${local.key_vault.vault_uri}secrets/${secret_name}/)"
-    } : {}
+    module.app_secrets.app_settings_bindings
   )
 
   tags = var.global_tags
