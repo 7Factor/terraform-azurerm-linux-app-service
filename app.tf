@@ -117,7 +117,7 @@ resource "azurerm_linux_web_app" "web_app" {
   }
 
   depends_on = [
-    module.app_secrets.azurerm_role_assignment.webapp_kv_reader
+    module.app_secrets
   ]
 }
 
