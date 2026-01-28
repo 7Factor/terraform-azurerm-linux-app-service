@@ -14,7 +14,7 @@ locals {
   }))
 
   key_vault = try(data.azurerm_key_vault.web_app[0], azurerm_key_vault.web_app[0], null)
-  
+
   needs_kv_role = length(local.app_secret_bindings) > 0
 }
 
@@ -58,5 +58,19 @@ resource "azurerm_key_vault_secret" "linked" {
 
   lifecycle {
     ignore_changes = [value]
+  }
+}
+
+module "app_secrets" {
+  source = "git::https://github.com/7Factor/terraform-azurerm-app-secrets?ref=feature%2Finitial-module-setup"
+
+  app_secrets = var.app_secrets
+
+  managed_identity_principal_id = local.needs_kv_role ? azurerm_user_assigned_identity.web_app[0].principal_id : null
+
+  key_vault_settings = {
+    name     = local.key_vault.name
+    rg_name  = local.resource_group.name
+    existing = true
   }
 }
