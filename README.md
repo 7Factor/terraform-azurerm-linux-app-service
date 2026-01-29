@@ -1,4 +1,4 @@
-# terraform-azurerm-app-service
+# terraform-azurerm-linux-app-service
 
 A lightweight, batteries-included Terraform module for deploying an Azure App Service (Linux) with sensible defaults and optional integrations.
 
@@ -28,7 +28,7 @@ locals {
 
 module "web_app" {
   source  = "7Factor/linux-app-service/azurerm"
-  version = "=> 1"
+  version = "~> 1.0"
 
   app_name    = "orders-api"
   resource_name_options = {
