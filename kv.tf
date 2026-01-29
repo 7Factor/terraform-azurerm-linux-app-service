@@ -1,6 +1,5 @@
 locals {
   kv_max_len = 24
-  create_kv  = length(var.app_secrets) > 0
 
   unsafe_kv_name = templatestring(var.resource_name_options.template_safe, merge(local.name_template_vars, {
     app_name      = local.safe_app_name
@@ -17,7 +16,8 @@ locals {
 }
 
 module "app_secrets" {
-  source = "git::https://github.com/7Factor/terraform-azurerm-app-secrets?ref=feature%2Finitial-module-setup"
+  source  = "7Factor/app-secrets/azurerm"
+  version = ">= 1"
 
   app_secrets = var.app_secrets
 
