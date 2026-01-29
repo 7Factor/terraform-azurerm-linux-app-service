@@ -1,4 +1,4 @@
-# terraform-azurerm-app-service
+# terraform-azurerm-linux-app-service
 
 A lightweight, batteries-included Terraform module for deploying an Azure App Service (Linux) with sensible defaults and optional integrations.
 
