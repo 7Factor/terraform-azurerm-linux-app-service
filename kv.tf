@@ -17,7 +17,7 @@ locals {
 
 module "app_secrets" {
   source  = "7Factor/app-secrets/azurerm"
-  version = ">= 1"
+  version = "~> 1.0"
 
   app_secrets = var.app_secrets
 
