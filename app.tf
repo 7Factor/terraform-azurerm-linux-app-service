@@ -98,6 +98,15 @@ resource "azurerm_linux_web_app" "web_app" {
     }
   }
 
+  dynamic "connection_string" {
+    for_each = var.connection_strings
+    content {
+      name  = connection_string.value.name
+      type  = connection_string.value.type
+      value = module.app_secrets.key_vault_references[connection_string.value.secret_name]
+    }
+  }
+
   app_settings = merge(
     terraform_data.app_settings.input,
     {

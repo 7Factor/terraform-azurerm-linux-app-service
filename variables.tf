@@ -79,6 +79,27 @@ locals {
   }
 }
 
+variable "connection_strings" {
+  description = "List of connection strings to add to the application."
+  type = list(object({
+    name        = string
+    type        = string
+    secret_name = string
+  }))
+  default   = []
+  sensitive = false
+
+  validation {
+    condition     = length([for s in var.connection_strings : s.name]) == length(distinct([for s in var.connection_strings : s.name]))
+    error_message = "Each connection_strings entry must have a unique 'name'."
+  }
+
+  validation {
+    condition     = alltrue([for cs in var.connection_strings : contains([for s in var.app_secrets : s.name], cs.secret_name)])
+    error_message = "Each connection_strings entry must reference a secret in app_secrets."
+  }
+}
+
 variable "application_stack" {
   type = object({
     docker_image_name        = optional(string)
