@@ -59,6 +59,8 @@ variable "app_secrets" {
     name             = string
     app_setting_name = optional(string)
     initial_value    = optional(string)
+    tags             = optional(map(string))
+    external         = optional(bool, false)
   }))
   default   = []
   sensitive = true
@@ -70,9 +72,6 @@ variable "app_secrets" {
 }
 
 locals {
-  app_secrets_by_name = {
-    for s in nonsensitive(var.app_secrets) : s.name => sensitive(s)
-  }
   app_secret_bindings = {
     for s in nonsensitive(var.app_secrets) : s.app_setting_name => s.name
     if s.app_setting_name != null && length(s.app_setting_name) > 0
