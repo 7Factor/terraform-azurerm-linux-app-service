@@ -71,13 +71,6 @@ variable "app_secrets" {
   }
 }
 
-locals {
-  app_secret_bindings = {
-    for s in nonsensitive(var.app_secrets) : s.app_setting_name => s.name
-    if s.app_setting_name != null && length(s.app_setting_name) > 0
-  }
-}
-
 variable "connection_strings" {
   description = "List of connection strings to add to the application."
   type = list(object({

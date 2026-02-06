@@ -12,7 +12,7 @@ locals {
     resource_type = "kv"
   }))
 
-  needs_kv_role = length(local.app_secret_bindings) > 0
+  needs_kv_role = length(module.app_secrets.app_settings_bindings) > 0
 }
 
 module "app_secrets" {
