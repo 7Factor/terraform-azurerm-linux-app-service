@@ -59,6 +59,8 @@ variable "app_secrets" {
     name             = string
     app_setting_name = optional(string)
     initial_value    = optional(string)
+    tags             = optional(map(string))
+    external         = optional(bool, false)
   }))
   default   = []
   sensitive = true
@@ -69,13 +71,24 @@ variable "app_secrets" {
   }
 }
 
-locals {
-  app_secrets_by_name = {
-    for s in nonsensitive(var.app_secrets) : s.name => sensitive(s)
+variable "connection_strings" {
+  description = "List of connection strings to add to the application."
+  type = list(object({
+    name        = string
+    type        = string
+    secret_name = string
+  }))
+  default   = []
+  sensitive = false
+
+  validation {
+    condition     = length([for s in var.connection_strings : s.name]) == length(distinct([for s in var.connection_strings : s.name]))
+    error_message = "Each connection_strings entry must have a unique 'name'."
   }
-  app_secret_bindings = {
-    for s in nonsensitive(var.app_secrets) : s.app_setting_name => s.name
-    if s.app_setting_name != null && length(s.app_setting_name) > 0
+
+  validation {
+    condition     = alltrue([for cs in var.connection_strings : contains([for s in var.app_secrets : s.name], cs.secret_name)])
+    error_message = "Each connection_strings entry must reference a secret in app_secrets."
   }
 }
 

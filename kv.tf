@@ -12,7 +12,7 @@ locals {
     resource_type = "kv"
   }))
 
-  needs_kv_role = length(local.app_secret_bindings) > 0
+  needs_kv_role = length(module.app_secrets.app_settings_bindings) > 0
 }
 
 module "app_secrets" {
@@ -26,7 +26,7 @@ module "app_secrets" {
   key_vault_settings = {
     name                       = var.key_vault.existing_name != null ? var.key_vault.existing_name : local.kv_name
     rg_name                    = var.key_vault.existing_rg_name != null ? var.key_vault.existing_rg_name : var.resource_group_name
-    externally_created         = var.key_vault.existing_name != null
+    external                   = var.key_vault.existing_name != null
     sku_name                   = var.key_vault.sku
     purge_protection_enabled   = var.key_vault.purge_protection_enabled
     soft_delete_retention_days = var.key_vault.soft_delete_retention_days
